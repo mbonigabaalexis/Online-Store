@@ -1,5 +1,5 @@
-const API="http://fakestoreapi.com/products/";
-const API_CATEGORIES="http://fakestoreapi.com/products/categories";
+const API="https://fakestoreapi.com/products/";
+const API_CATEGORIES="https://fakestoreapi.com/products/categories";
 
     async function  getdata(){
     let data=await (await fetch(API)).json();
@@ -56,7 +56,14 @@ getdata().then((products)=>{
         productItem.appendChild(productDiscount)
 
         document.getElementById("product-container").appendChild(productItem);
+        
+        productItem.addEventListener('click' ,function (){
+             location.href="details.html"
+             
+             sessionStorage.setItem("product",JSON.stringify(product))
+             
+         })
     
   });
 }).catch((error)={
-});
+})

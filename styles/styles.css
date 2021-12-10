@@ -73,7 +73,7 @@ list-style: none;
 }
 .product-item{
 
-    width: 205;
+    width: 205px;
     padding: .4rem;
     box-shadow: 0 0 2px rgba(51, 66, 70, 0.2);
 }
@@ -223,7 +223,12 @@ list-style: none;
    }
    .image-container img{
        width: 100%;
-       width: 400px;
+       height: 400px;
+   }
+   .product-details-container{
+        height: 400px;
+        overflow: scroll;
+
    }
    .product-details-container h4{
        font-weight: 700;
