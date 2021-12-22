@@ -1,69 +1,87 @@
-const API="https://fakestoreapi.com/products/";
-const API_CATEGORIES="https://fakestoreapi.com/products/categories";
+const API = "https://fakestoreapi.com/products/";
+const API_CATEGORIES = "https://fakestoreapi.com/products/categories";
+let productList = [];
 
-    async function  getdata(){
-    let data=await (await fetch(API)).json();
-    return await data;
+async function getData() {
+  let data = await (await fetch(API)).json();
+  return await data;
 }
 
-window.addEventListener('load',function(){
-    document.getElementById("load").classList.remove("hideorshow");
-
-
-})
-
-async function getcategories(){
-    let data=await (await fetch(API_CATEGORIES)).json();
-    return await data;   
-}
-// categories
-//<li class="list-group-item item-category"> Men's clothes</li>
-getcategories().then(function(categories){
-    document.getElementById("load").classList.add("hideorshow");
-        categories.forEach(function(category){
-        const categoryItem=document.createElement("li");
-        categoryItem.classList.add(...["list-group-item","item-categoriry"])
-        categoryItem.innerHTML=category;
-    document.getElementById("category-container").appendChild(categoryItem)
-  })
+window.addEventListener("load", function () {
+  document.getElementById("loader").classList.remove("hideorshow");
 });
-// products
-/* <div class="card product-item">
-                  <img src="img/img1.jpg" alt="product image">
-                  <h4>20000 RWF</h4>
-                  <P>Men cotton Jacket</P>
-                  <span>-34%</span>
-              </div>  */
-getdata().then((products)=>{
-    products.forEach(function (product){
 
-        const productItem=document.createElement("div");
-        productItem.classList.add(...["card","product-item"])
-        const productImg=document.createElement("img");
-        productImg.src=product.image;
-        productImg.alt="product image";
-        const productTitle=document.createElement("p");
-        productTitle.innerHTML=product.title; 
-        const productprice=document.createElement("h4");
-        productprice.innerHTML="$"+product.price;
-        
-        const productDiscount=document.createElement("span");
-        productDiscount.innerHTML=product.rating.rate;
+async function getCategories() {
+  let data = await (await fetch(API_CATEGORIES)).json();
+  return await data;
+}
 
-        productItem.appendChild(productImg)
-        productItem.appendChild(productprice)
-        productItem.appendChild(productTitle)
-        productItem.appendChild(productDiscount)
-
-        document.getElementById("product-container").appendChild(productItem);
-        
-        productItem.addEventListener('click' ,function (){
-             location.href="details.html"
-             
-             sessionStorage.setItem("product",JSON.stringify(product))
-             
-         })
-    
+getCategories().then(function (categories) {
+  categories.forEach(function (category) {
+    const categoryItem = document.createElement("li");
+    categoryItem.classList.add(...["list-group-item", "item-category"]);
+    categoryItem.innerHTML = category;
+    //[Mens clothes]
+    document.getElementById("category-container").appendChild(categoryItem);
+    categoryItem.addEventListener("click", function () {
+      location.href = "categories.html";
+      sessionStorage.setItem("category", category);
+    });
   });
-}).catch((error)={
-})
+});
+
+getData()
+  .then((products) => {
+    document.getElementById("loader").classList.add("hideorshow");
+    productList = products;
+    setDataToViews();
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+function setDataToViews() {
+  document.getElementById("products-container").innerHTML = "";
+  productList.forEach(function (product) {
+    const productItem = document.createElement("div");
+    productItem.classList.add(...["card", "product-item"]);
+    const productImg = document.createElement("img");
+    productImg.src = product.image;
+    productImg.alt = "Product image";
+
+    const productTitle = document.createElement("p");
+    productTitle.innerHTML = product.title;
+    const productPrice = document.createElement("h4");
+    productPrice.innerHTML = "$ " + product.price;
+    const productDiscount = document.createElement("span");
+    productDiscount.innerHTML = product.rating.rate;
+
+    productItem.appendChild(productImg);
+    productItem.appendChild(productPrice);
+    productItem.appendChild(productTitle);
+    productItem.appendChild(productDiscount);
+    productImg.alt = "Product image";
+
+    document.getElementById("products-container").appendChild(productItem);
+
+    productItem.addEventListener("click", function () {
+      location.href = "details.html";
+      sessionStorage.setItem("product", JSON.stringify(product));
+    });
+  });
+}
+
+document.getElementById("btnsearch").addEventListener("click", function () {
+  const query = document.getElementById("search").value;
+  const filteredArray = productList.filter(function (product) {
+    return product.title.toLowerCase().includes(query.toLowerCase());
+  });
+  productList = filteredArray;
+  setDataToViews();
+});
+
+document.addEventListener("keydown", function (e) {
+  if(e.which==8){
+    location.reload();
+  }
+});
